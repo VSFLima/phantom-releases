@@ -52,7 +52,7 @@ while IFS=$'\t' read -r url sha; do
     echo "DOWNLOAD FAILED for $name"
     exit 1
   fi
-  if ! printf '%s  %s\n' "$sha" "$name" | sha256sum -c --quiet >/dev/null 2>&1; then
+  if [ "$(sha256sum "$DEBS/$name" | cut -d' ' -f1)" != "$sha" ]; then
     echo "SHA-256 mismatch for $name (got $(sha256sum "$DEBS/$name" | cut -d' ' -f1))"
     exit 1
   fi
