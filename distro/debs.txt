@@ -56,3 +56,4 @@ https://packages.termux.dev/apt/termux-main/pool/main/p/pulseaudio/pulseaudio_17
 https://packages.termux.dev/apt/termux-main/pool/main/q/qemu-system-aarch64-headless/qemu-system-aarch64-headless_1:11.0.3_aarch64.deb	e0e0dec3b5ab264bacbae5656888c8dc45dedf9997d75bafdc4d2d4943911263
 https://packages.termux.dev/apt/termux-main/pool/main/z/zlib/zlib_1.3.2_aarch64.deb	75e7d0af17fcc3b40004309fdc00a1ddb9ae08346dce5e269902c34ac3966ac9
 https://packages.termux.dev/apt/termux-main/pool/main/z/zstd/zstd_1.5.7-1_aarch64.deb	e1b4a5113648da8de189620ba1fce74c48b2d0833d9043391b9a1c91fb606fd3
+https://packages.termux.dev/apt/termux-main/pool/main/q/qemu-common/qemu-common_1:11.0.3_aarch64.deb	743cc216431a0b0b73dc7f7c404a7c54107bd5f643d073a60325e7797f95016a

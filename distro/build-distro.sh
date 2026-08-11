@@ -74,6 +74,11 @@ QEMU_BIN="$(find "$WORK" -path '*/usr/bin/qemu-system-aarch64' -type f | head -1
 [ -n "$QEMU_BIN" ] || { echo "qemu-system-aarch64 not found"; exit 1; }
 cp "$QEMU_BIN" "$STAGING/qemu-system-aarch64"
 
+echo ">> Installing QEMU firmware (qemu-common)"
+FW_DIR="$(find "$WORK" -path '*/usr/share/qemu' -type d | head -1)"
+[ -n "$FW_DIR" ] || { echo "qemu firmware directory not found"; exit 1; }
+cp -rf "$FW_DIR/." "$STAGING/"
+
 echo ">> Mapping SONAMEs -> files"
 declare -A soname_file
 while IFS= read -r f; do
@@ -110,8 +115,10 @@ done
 
 echo ">> Repackaging phantom.tar.gz"
 chmod 0755 "$STAGING/qemu-system-aarch64" "$STAGING"/lib/*
-printf '%s\n' "${DISTRO_VERSION:-2}" > "$STAGING/VERSION"
-(cd "$STAGING" && tar --format=ustar -czf "$WORK/phantom.tar.gz" rootfs.img kernel initrd.img qemu-system-aarch64 lib VERSION)
+printf '%s\n' "${DISTRO_VERSION:-3}" > "$STAGING/VERSION"
+FILES=()
+for entry in "$STAGING"/*; do FILES+=("$(basename "$entry")"); done
+(cd "$STAGING" && tar --format=ustar -czf "$WORK/phantom.tar.gz" "${FILES[@]}")
 
 sha256sum "$WORK/phantom.tar.gz" | awk '{print $1}' > "$WORK/phantom.sha256"
 echo "phantom.tar.gz sha256: $(cat "$WORK/phantom.sha256")"
