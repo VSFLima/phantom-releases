@@ -34,6 +34,7 @@ echo ">> Extracting base content"
 tar -xzf "$WORK/base.tar.gz" -C "$STAGING"
 rm -f "$STAGING/qemu-system-aarch64"
 rm -rf "$STAGING/lib"
+mkdir -p "$STAGING/lib"
 
 download_deb() {
   local rel="$1" out="$2"
