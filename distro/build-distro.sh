@@ -117,6 +117,6 @@ echo "phantom.tar.gz sha256: $(cat "$WORK/phantom.sha256")"
 ls -lh "$WORK/phantom.tar.gz"
 
 echo ">> Uploading assets to $REPO ($RELEASE_TAG)"
-gh release upload "$RELEASE_TAG" "$WORK/phantom.sha256" --repo "$REPO" --clobber --quiet
-gh release upload "$RELEASE_TAG" "$WORK/phantom.tar.gz" --repo "$REPO" --clobber --quiet
+gh release upload "$RELEASE_TAG" "$WORK/phantom.sha256" --repo "$REPO" --clobber
+gh release upload "$RELEASE_TAG" "$WORK/phantom.tar.gz" --repo "$REPO" --clobber
 echo ">> Done"
