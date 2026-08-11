@@ -111,7 +111,7 @@ done
 echo ">> Repackaging phantom.tar.gz"
 chmod 0755 "$STAGING/qemu-system-aarch64" "$STAGING"/lib/*
 printf '%s\n' "${DISTRO_VERSION:-2}" > "$STAGING/VERSION"
-(cd "$STAGING" && tar --format=ustar -czf "$WORK/phantom.tar.gz" .)
+(cd "$STAGING" && tar --format=ustar -czf "$WORK/phantom.tar.gz" rootfs.img kernel initrd.img qemu-system-aarch64 lib VERSION)
 
 sha256sum "$WORK/phantom.tar.gz" | awk '{print $1}' > "$WORK/phantom.sha256"
 echo "phantom.tar.gz sha256: $(cat "$WORK/phantom.sha256")"
