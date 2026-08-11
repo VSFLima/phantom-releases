@@ -76,7 +76,7 @@ cp "$QEMU_BIN" "$STAGING/qemu-system-aarch64"
 echo ">> Mapping SONAMEs -> files"
 declare -A soname_file
 while IFS= read -r f; do
-  soname="$(readelf -d "$f" 2>/dev/null | sed -n 's/.*Library soname: \[\([^]]*\)\].*/\1/p' | head -1)"
+  soname="$(readelf -d "$f" 2>/dev/null | sed -n 's/.*Library soname: \[\([^]]*\)\].*/\1/p' | head -1)" || true
   if [ -n "$soname" ]; then
     soname_file["$soname"]="$f"
   fi
