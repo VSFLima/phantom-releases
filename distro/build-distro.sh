@@ -20,6 +20,12 @@ mkdir -p "$STAGING/lib" "$DEBS"
 
 SYSTEM="libc.so libm.so libdl.so libandroid.so liblog.so libstdc++.so libc++.so"
 
+# Termux official repo plus mirrors to fall back on if a download looks wrong
+MIRRORS=(
+  "https://packages.termux.dev/apt/termux-main"
+  "https://grimler.se/termux/apt/termux-main"
+)
+
 echo ">> Downloading previous distro release (base content)"
 BASE_URL="https://github.com/$REPO/releases/download/$RELEASE_TAG/phantom.tar.gz"
 curl -fsSL --retry 3 "$BASE_URL" -o "$WORK/base.tar.gz"
@@ -29,11 +35,27 @@ tar -xzf "$WORK/base.tar.gz" -C "$STAGING"
 rm -f "$STAGING/qemu-system-aarch64"
 rm -rf "$STAGING/lib"
 
+download_deb() {
+  local rel="$1" out="$2"
+  for base in "${MIRRORS[@]}"; do
+    curl -fsSL --retry 4 --retry-all-errors -A "Termux/0.118.0" "$base/$rel" -o "$out" && \
+      [ -s "$out" ] && [ "$(head -c 8 "$out" | tr -d '\0')" = "!<arch>" ] && return 0
+  done
+  return 1
+}
+
 echo ">> Downloading Termux QEMU + libraries ($(wc -l < "$ROOT/debs.txt") packages)"
 while IFS=$'\t' read -r url sha; do
   name="$(basename "$url")"
-  curl -fsSL --retry 3 "$url" -o "$DEBS/$name"
-  printf '%s  %s\n' "$sha" "$name" | sha256sum -c --quiet >/dev/null 2>&1 || { echo "SHA-256 mismatch for $name"; exit 1; }
+  rel="${url#https://packages.termux.dev/apt/termux-main/}"
+  if ! download_deb "$rel" "$DEBS/$name"; then
+    echo "DOWNLOAD FAILED for $name"
+    exit 1
+  fi
+  if ! printf '%s  %s\n' "$sha" "$name" | sha256sum -c --quiet >/dev/null 2>&1; then
+    echo "SHA-256 mismatch for $name (got $(sha256sum "$DEBS/$name" | cut -d' ' -f1))"
+    exit 1
+  fi
 done < "$ROOT/debs.txt"
 
 echo ">> Extracting packages"
