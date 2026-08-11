@@ -79,7 +79,9 @@ declare -A soname_file
 while IFS= read -r f; do
   soname="$(readelf -d "$f" 2>/dev/null | sed -n 's/.*Library soname: \[\([^]]*\)\].*/\1/p' | head -1)" || true
   if [ -n "$soname" ]; then
-    soname_file["$soname"]="$f"
+    [ -n "${soname_file[$soname]:-}" ] || soname_file["$soname"]="$f"
+  else
+    [ -n "${soname_file[$(basename "$f")]:-}" ] || soname_file["$(basename "$f")"]="$f"
   fi
 done < <(grep -v '^$' "$WORK/libfiles")
 
